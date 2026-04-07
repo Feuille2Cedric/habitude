@@ -1,4 +1,3 @@
-export const STORAGE_KEY = "habitkit-personal-v1";
 export const GRID_LENGTH = 84;
 
 export const COLORS = [

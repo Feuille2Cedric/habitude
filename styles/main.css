@@ -2,12 +2,13 @@
 
 :root {
     color-scheme: dark;
-    --bg: #050505;
     --text: #f3f5fa;
     --muted: #b7bcc8;
     --panel: rgba(27, 27, 30, 0.95);
     --stroke: rgba(255, 255, 255, 0.08);
     --soft: rgba(255, 255, 255, 0.05);
+    --danger: #ff7474;
+    --success: #42d89f;
 }
 
 * { box-sizing: border-box; }
@@ -80,10 +81,9 @@ body::before {
     gap: 14px;
 }
 
-.brand h1, .habit-title, .dialog-card h2 {
-    margin: 0;
-    font-family: "Space Grotesk", "Manrope", sans-serif;
-    letter-spacing: -.06em;
+.brand-copy {
+    margin-top: 8px;
+    max-width: 520px;
 }
 
 .brand h1 { font-size: 2rem; }
@@ -115,15 +115,43 @@ body::before {
     letter-spacing: -.03em;
 }
 
-.icon-button, .floating-add, .segment button, .habit-cta, .swatch, .chip, .primary-button, .secondary-button, .danger-button, .inline-button {
+.time-badge,
+.user-badge {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.time-badge span,
+.user-badge span,
+.stat-label {
+    color: var(--muted);
+    font-size: .78rem;
+}
+
+.time-badge strong,
+.user-badge strong {
+    font-size: .96rem;
+}
+
+.icon-button,
+.floating-add,
+.segment button,
+.habit-cta,
+.swatch,
+.chip,
+.primary-button,
+.secondary-button,
+.danger-button,
+.inline-button {
     border: 0;
     cursor: pointer;
     font: inherit;
 }
 
 .icon-button {
-    width: 44px;
-    height: 44px;
+    width: 46px;
+    height: 46px;
     border-radius: 50%;
     color: var(--text);
     background: transparent;
@@ -131,11 +159,40 @@ body::before {
     place-items: center;
 }
 
-.icon-button:hover, .floating-add:hover, .segment button:hover, .habit-cta:hover { transform: translateY(-1px); }
+.icon-button svg,
+.habit-icon svg,
+.habit-cta svg {
+    width: 34px;
+    height: 34px;
+}
 
-.icon-button:focus-visible, .floating-add:focus-visible, .segment button:focus-visible, .habit-cta:focus-visible, .grid-cell:focus-visible, .swatch:focus-visible, .chip:focus-visible, .primary-button:focus-visible, .secondary-button:focus-visible, .danger-button:focus-visible, .inline-button:focus-visible {
+.icon-button:hover,
+.floating-add:hover,
+.segment button:hover,
+.habit-cta:hover {
+    transform: translateY(-1px);
+}
+
+.icon-button:focus-visible,
+.floating-add:focus-visible,
+.segment button:focus-visible,
+.habit-cta:focus-visible,
+.grid-cell:focus-visible,
+.swatch:focus-visible,
+.chip:focus-visible,
+.primary-button:focus-visible,
+.secondary-button:focus-visible,
+.danger-button:focus-visible,
+.inline-button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
     outline: 2px solid rgba(255, 255, 255, .78);
     outline-offset: 2px;
+}
+
+.toolbar {
+    gap: 20px;
+    padding-bottom: 24px;
 }
 
 .hero {
@@ -152,12 +209,6 @@ body::before {
     font-size: 1.06rem;
 }
 
-.hero-copy p, .dialog-card p, .habit-description, .empty-state p {
-    margin: 0;
-    color: var(--muted);
-    line-height: 1.45;
-}
-
 .hero-stats {
     gap: 12px;
     margin-top: 16px;
@@ -165,24 +216,35 @@ body::before {
 
 .stat {
     flex: 1;
-    padding: 12px;
-    border-radius: 18px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.06);
     display: flex;
     flex-direction: column;
     gap: 4px;
 }
 
-.stat-label { color: var(--muted); font-size: .82rem; }
-.stat-value { font-size: 1.18rem; font-weight: 800; letter-spacing: -.05em; }
+.stat-value {
+    font-size: 1.18rem;
+    font-weight: 800;
+    letter-spacing: -.05em;
+}
+
+.board {
+    padding: 18px;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.board-head {
+    gap: 16px;
+    margin-bottom: 18px;
+}
 
 .segment {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
     padding: 4px;
-    margin-bottom: 18px;
+    min-width: 240px;
     border-radius: 18px;
     background: rgba(255, 255, 255, .06);
     border: 1px solid rgba(255, 255, 255, .08);
@@ -212,6 +274,27 @@ body::before {
     background: rgba(255, 255, 255, .1);
     color: var(--text);
 }
+
+.board-status {
+    flex: 1;
+    text-align: center;
+}
+
+.floating-add {
+    min-height: 60px;
+    padding: 0 20px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #ffffff, #d8dce8);
+    color: #101113;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: "Space Grotesk", "Manrope", sans-serif;
+    font-weight: 800;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, .4);
+}
+
+.floating-add span { font-size: 1.4rem; }
 
 .habit-list {
     display: flex;
@@ -244,12 +327,10 @@ body::before {
     background: color-mix(in srgb, var(--habit-color) 18%, #202125);
 }
 
-.habit-icon svg, .icon-button svg, .habit-cta svg {
-    width: 34px;
-    height: 34px;
+.habit-content {
+    flex: 1;
+    min-width: 0;
 }
-
-.habit-content { flex: 1; min-width: 0; }
 
 .habit-title {
     font-size: 1.58rem;
@@ -265,7 +346,8 @@ body::before {
     color: var(--muted);
 }
 
-.inline-button, .secondary-button {
+.inline-button,
+.secondary-button {
     color: var(--muted);
     background: transparent;
     padding: 0;
@@ -325,7 +407,9 @@ body::before {
     box-shadow: 0 18px 40px rgba(0, 0, 0, .4);
 }
 
-.floating-add span { font-size: 1.4rem; }
+.grid-cell:hover {
+    transform: scale(1.08);
+}
 
 .empty-state {
     gap: 16px;
@@ -357,30 +441,13 @@ dialog::backdrop {
     gap: 8px;
 }
 
-.dialog-card h2 { font-size: 1.56rem; }
-
-label {
-    color: var(--muted);
-    font-size: .9rem;
-    margin-top: 8px;
+.dialog-card h2 {
+    font-size: 1.56rem;
 }
 
-input, textarea {
-    width: 100%;
-    padding: 14px 16px;
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, .08);
-    background: var(--soft);
-    color: var(--text);
-    font: inherit;
-}
-
-textarea {
-    min-height: 92px;
-    resize: vertical;
-}
-
-.swatches, .chips {
+.swatches,
+.chips {
+    gap: 10px;
     flex-wrap: wrap;
     margin-top: 4px;
 }
@@ -406,14 +473,18 @@ textarea {
     color: var(--text);
 }
 
-.chip.active { background: rgba(255, 255, 255, .16); }
+.chip.active {
+    background: rgba(255, 255, 255, .16);
+}
 
 .dialog-actions {
     gap: 10px;
     margin-top: 14px;
 }
 
-.primary-button, .danger-button {
+.primary-button,
+.danger-button,
+.secondary-button {
     min-height: 48px;
     padding: 0 18px;
     border-radius: 16px;
@@ -426,7 +497,7 @@ textarea {
 }
 
 .danger-button {
-    background: #ff7474;
+    background: var(--danger);
     color: #1c0a0a;
     font-weight: 800;
 }
