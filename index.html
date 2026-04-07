@@ -9,39 +9,7 @@
 </head>
 <body>
     <main class="shell">
-        <section class="setup-notice is-hidden" id="setupNotice">
-            <div class="setup-card">
-                <h2>Configuration Supabase requise</h2>
-                <p>Ajoute ton URL Supabase et ta cle <code>anon</code> dans <code>scripts/supabase-config.js</code>, puis execute le script SQL fourni dans le dossier <code>supabase</code>.</p>
-            </div>
-        </section>
-
-        <section class="auth-shell" id="authShell">
-            <div class="auth-card">
-                <div class="auth-copy">
-                    <span class="eyebrow">GitHub Pages + Supabase</span>
-                    <h1>Habit<span>Kit</span></h1>
-                    <p>Connecte-toi pour retrouver tes habitudes depuis n'importe quel navigateur.</p>
-                </div>
-
-                <form class="auth-form" id="authForm">
-                    <label for="authEmail">Email</label>
-                    <input id="authEmail" name="authEmail" type="email" autocomplete="email" placeholder="toi@exemple.com" required>
-
-                    <label for="authPassword">Mot de passe</label>
-                    <input id="authPassword" name="authPassword" type="password" autocomplete="current-password" placeholder="Ton mot de passe" required>
-
-                    <div class="auth-actions">
-                        <button class="primary-button" type="submit" id="signInButton">Se connecter</button>
-                        <button class="secondary-button" type="button" id="signUpButton">Creer le compte</button>
-                    </div>
-
-                    <p class="auth-feedback" id="authFeedback"></p>
-                </form>
-            </div>
-        </section>
-
-        <section class="app-shell is-hidden" id="appShell">
+        <section class="app-shell">
             <header class="toolbar">
                 <div class="brand">
                     <button class="icon-button" type="button" id="seedButton" aria-label="Recharger la demo">
@@ -52,7 +20,7 @@
                     </button>
                     <div>
                         <h1>Habit<span>Kit</span></h1>
-                        <p class="brand-copy">Un tracker personnel inspire de HabitKit, synchronise avec Supabase.</p>
+                        <p class="brand-copy">Un tracker personnel inspire de HabitKit, sans l’habillage telephone.</p>
                     </div>
                 </div>
 
@@ -60,10 +28,6 @@
                     <div class="time-badge">
                         <span>Local</span>
                         <strong id="clock">10:20</strong>
-                    </div>
-                    <div class="user-badge">
-                        <span>Connecte en tant que</span>
-                        <strong id="userEmail">utilisateur</strong>
                     </div>
                     <button class="icon-button" type="button" id="toggleSummary" aria-label="Afficher ou masquer le resume">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -78,20 +42,13 @@
                             <path d="M12 8v8M8 12h8"></path>
                         </svg>
                     </button>
-                    <button class="icon-button" type="button" id="signOutButton" aria-label="Se deconnecter">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                            <path d="m16 17 5-5-5-5"></path>
-                            <path d="M21 12H9"></path>
-                        </svg>
-                    </button>
                 </div>
             </header>
 
             <section class="hero" id="hero">
                 <div class="hero-copy">
                     <strong>Routine personnelle</strong>
-                    <p>Version statique sur GitHub Pages, avec authentification et stockage centralise sur Supabase.</p>
+                    <p>Version statique, sans Firebase, avec stockage local pour fonctionner directement sur GitHub Pages.</p>
                 </div>
                 <div class="hero-stats">
                     <div class="stat">
@@ -115,8 +72,6 @@
                         <button type="button" class="active" data-filter="all" aria-selected="true">Toutes</button>
                         <button type="button" data-filter="today" aria-selected="false">A faire</button>
                     </div>
-
-                    <p class="board-status" id="syncStatus">Synchronise avec Supabase.</p>
 
                     <button class="floating-add" type="button" id="floatingAdd">
                         <span>+</span> Nouvelle habitude

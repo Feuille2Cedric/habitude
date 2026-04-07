@@ -40,6 +40,8 @@ const elements = {
     habitForm: document.getElementById("habitForm"),
     deleteDialog: document.getElementById("deleteDialog"),
     deleteCopy: document.getElementById("deleteCopy"),
+    habitDialogTitle: document.getElementById("habitDialogTitle"),
+    habitDialogCopy: document.getElementById("habitDialogCopy"),
     colorSwatches: document.getElementById("colorSwatches"),
     iconChips: document.getElementById("iconChips"),
     habitName: document.getElementById("habitName"),
@@ -54,8 +56,7 @@ const state = {
     selectedColor: COLORS[0],
     selectedIcon: ICONS[0],
     editingId: null,
-    deleteId: null,
-    user: null
+    deleteId: null
 };
 
 function setAuthFeedback(message = "", tone = "") {
@@ -267,73 +268,39 @@ function handleSignedOutUser() {
     toggleShells({ auth: true });
 }
 
-async function submitSignIn(event) {
-    event.preventDefault();
-    const email = elements.authEmail.value.trim();
-    const password = elements.authPassword.value;
-
-    setAuthFeedback("Connexion en cours...");
-    try {
-        await signInWithPassword(email, password);
-        setAuthFeedback("Connexion reussie.", "success");
-    } catch (error) {
-        console.error(error);
-        setAuthFeedback(error.message, "error");
+    if (state.editingId) {
+        state.habits = state.habits.map((habit) => {
+            if (habit.id !== state.editingId) return habit;
+            return normalizeHabit({
+                ...habit,
+                name,
+                description: description || "Nouvelle routine personnelle",
+                color: state.selectedColor,
+                icon: state.selectedIcon,
+                history: habit.history
+            });
+        });
+    } else {
+        state.habits.unshift(normalizeHabit({
+            id: uid(),
+            name,
+            description: description || "Nouvelle routine personnelle",
+            color: state.selectedColor,
+            icon: state.selectedIcon,
+            history: new Array(GRID_LENGTH).fill(false)
+        }));
     }
+
+    persist();
+    render();
+    elements.habitDialog.close();
+    resetFormState();
 }
 
-async function submitSignUp() {
-    const email = elements.authEmail.value.trim();
-    const password = elements.authPassword.value;
-    if (!email || !password) {
-        setAuthFeedback("Renseigne un email et un mot de passe.", "error");
-        return;
-    }
-
-    setAuthFeedback("Creation du compte...");
-    try {
-        const data = await signUpWithPassword(email, password);
-        if (data.session) {
-            setAuthFeedback("Compte cree et connecte.", "success");
-        } else {
-            setAuthFeedback("Compte cree. Si la confirmation email est active dans Supabase, valide l'email avant connexion.", "success");
-        }
-    } catch (error) {
-        console.error(error);
-        setAuthFeedback(error.message, "error");
-    }
-}
-
-async function boot() {
-    renderClock(elements.clock);
-    setInterval(() => renderClock(elements.clock), 30000);
-    renderFormOptions({ color: state.selectedColor, icon: state.selectedIcon }, elements);
-
-    if (!isSupabaseConfigured()) {
-        toggleShells({ setup: true });
-        return;
-    }
-
-    subscribeToAuthChanges(async (user) => {
-        if (user) {
-            await handleSignedInUser(user);
-        } else {
-            handleSignedOutUser();
-        }
-    });
-
-    try {
-        const currentUser = await getCurrentUser();
-        if (currentUser) {
-            await handleSignedInUser(currentUser);
-        } else {
-            handleSignedOutUser();
-        }
-    } catch (error) {
-        console.error(error);
-        handleSignedOutUser();
-        setAuthFeedback(`Impossible de contacter Supabase au chargement: ${error.message}`, "error");
-    }
+function editHabit(habitId) {
+    const habit = state.habits.find((item) => item.id === habitId);
+    if (!habit) return;
+    openHabitDialog(habit);
 }
 
 function bindEvents() {
@@ -376,8 +343,8 @@ function bindEvents() {
         if (!button) return;
 
         const { action, id, index } = button.dataset;
-        if (action === "cell") await toggleCell(id, Number(index));
-        if (action === "today") await toggleToday(id);
+        if (action === "cell") toggleCell(id, Number(index));
+        if (action === "today") toggleToday(id);
         if (action === "edit") editHabit(id);
         if (action === "delete") askDelete(id);
     });
