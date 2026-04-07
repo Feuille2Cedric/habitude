@@ -124,6 +124,12 @@ async function refreshHabits() {
     setSyncStatus("Chargement des habitudes...");
     try {
         state.habits = await loadHabits(supabase);
+
+        if (state.habits.length === 0) {
+            setSyncStatus("Premiere connexion detectee, creation de la demo...");
+            state.habits = await replaceWithSeedHabits(supabase, state.user.id);
+        }
+
         renderApp();
         setSyncStatus("Synchronise avec Supabase.");
     } catch (error) {
