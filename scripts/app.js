@@ -374,5 +374,6 @@ function bindEvents() {
 bindEvents();
 boot().catch((error) => {
     console.error(error);
-    toggleShells({ setup: true });
+    handleSignedOutUser();
+    setAuthFeedback(`Erreur de demarrage: ${error.message}`, "error");
 });
