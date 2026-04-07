@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Habit Tracker</title>
+    <style>
+        :root {
+            --bg: #f0f2f5;
+            --card: #ffffff;
+            --primary: #4a90e2;
+            --text: #333;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { width: 100%; max-width: 400px; }
+        h1 { text-align: center; color: var(--primary); }
+        .habit-input { display: flex; gap: 10px; margin-bottom: 20px; }
+        input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
+        button { padding: 10px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; }
+        .habit-list { list-style: none; padding: 0; }
+        .habit-item { background: var(--card); margin-bottom: 10px; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .habit-name { font-weight: bold; }
+        .checkbox { width: 25px; height: 25px; cursor: pointer; }
+        .delete-btn { color: #ff4d4d; background: none; border: none; font-size: 14px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📅 Mes Habitudes</h1>
+    
+    <div class="habit-input">
+        <input type="text" id="habitName" placeholder="Nouvelle habitude...">
+        <button onclick="addHabit()">Ajouter</button>
+    </div>
+
+    <ul id="habitList" class="habit-list"></ul>
+</div>
+
+<script>
+    let habits = JSON.parse(localStorage.getItem('myHabits')) || [];
+
+    function saveAndRender() {
+        localStorage.setItem('myHabits', JSON.stringify(habits));
+        renderHabits();
+    }
+
+    function addHabit() {
+        const name = document.getElementById('habitName').value;
+        if (name) {
+            habits.push({ id: Date.now(), name: name, done: false });
+            document.getElementById('habitName').value = '';
+            saveAndRender();
+        }
+    }
+
+    function toggleHabit(id) {
+        habits = habits.map(h => h.id === id ? { ...h, done: !h.done } : h);
+        saveAndRender();
+    }
+
+    function deleteHabit(id) {
+        habits = habits.filter(h => h.id !== id);
+        saveAndRender();
+    }
+
+    function renderHabits() {
+        const list = document.getElementById('habitList');
+        list.innerHTML = habits.map(h => `
+            <li class="habit-item">
+                <span class="habit-name" style="${h.done ? 'text-decoration: line-through; opacity: 0.5' : ''}">${h.name}</span>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <input type="checkbox" class="checkbox" ${h.done ? 'checked' : ''} onclick="toggleHabit(${h.id})">
+                    <button class="delete-btn" onclick="deleteHabit(${h.id})">✕</button>
+                </div>
+            </li>
+        `).join('');
+    }
+
+    renderHabits();
+</script>
+
+</body>
+</html>
