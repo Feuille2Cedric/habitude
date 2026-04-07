@@ -9,84 +9,129 @@
 </head>
 <body>
     <main class="shell">
-        <div class="phone">
-            <section class="screen">
-                <div class="statusbar">
-                    <span id="clock">10:20</span>
-                    <div class="status-icons" aria-hidden="true">
-                        <div class="signal"><span></span><span></span><span></span><span></span></div>
-                        <div class="wifi"></div>
-                        <div class="battery"><span></span></div>
+        <section class="setup-notice is-hidden" id="setupNotice">
+            <div class="setup-card">
+                <h2>Configuration Supabase requise</h2>
+                <p>Ajoute ton URL Supabase et ta cle <code>anon</code> dans <code>scripts/supabase-config.js</code>, puis execute le script SQL fourni dans le dossier <code>supabase</code>.</p>
+            </div>
+        </section>
+
+        <section class="auth-shell" id="authShell">
+            <div class="auth-card">
+                <div class="auth-copy">
+                    <span class="eyebrow">GitHub Pages + Supabase</span>
+                    <h1>Habit<span>Kit</span></h1>
+                    <p>Connecte-toi pour retrouver tes habitudes depuis n'importe quel navigateur.</p>
+                </div>
+
+                <form class="auth-form" id="authForm">
+                    <label for="authEmail">Email</label>
+                    <input id="authEmail" name="authEmail" type="email" autocomplete="email" placeholder="toi@exemple.com" required>
+
+                    <label for="authPassword">Mot de passe</label>
+                    <input id="authPassword" name="authPassword" type="password" autocomplete="current-password" placeholder="Ton mot de passe" required>
+
+                    <div class="auth-actions">
+                        <button class="primary-button" type="submit" id="signInButton">Se connecter</button>
+                        <button class="secondary-button" type="button" id="signUpButton">Creer le compte</button>
+                    </div>
+
+                    <p class="auth-feedback" id="authFeedback"></p>
+                </form>
+            </div>
+        </section>
+
+        <section class="app-shell is-hidden" id="appShell">
+            <header class="toolbar">
+                <div class="brand">
+                    <button class="icon-button" type="button" id="seedButton" aria-label="Recharger la demo">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M12 2v2.2M12 19.8V22M4.93 4.93l1.56 1.56M17.51 17.51l1.56 1.56M2 12h2.2M19.8 12H22M4.93 19.07l1.56-1.56M17.51 6.49l1.56-1.56"></path>
+                        </svg>
+                    </button>
+                    <div>
+                        <h1>Habit<span>Kit</span></h1>
+                        <p class="brand-copy">Un tracker personnel inspire de HabitKit, synchronise avec Supabase.</p>
                     </div>
                 </div>
 
-                <header class="toolbar">
-                    <div class="brand">
-                        <button class="icon-button" type="button" id="seedButton" aria-label="Recharger la demo">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <circle cx="12" cy="12" r="3"></circle>
-                                <path d="M12 2v2.2M12 19.8V22M4.93 4.93l1.56 1.56M17.51 17.51l1.56 1.56M2 12h2.2M19.8 12H22M4.93 19.07l1.56-1.56M17.51 6.49l1.56-1.56"></path>
-                            </svg>
-                        </button>
-                        <h1>Habit<span>Kit</span></h1>
+                <div class="toolbar-actions">
+                    <div class="time-badge">
+                        <span>Local</span>
+                        <strong id="clock">10:20</strong>
+                    </div>
+                    <div class="user-badge">
+                        <span>Connecte en tant que</span>
+                        <strong id="userEmail">utilisateur</strong>
+                    </div>
+                    <button class="icon-button" type="button" id="toggleSummary" aria-label="Afficher ou masquer le resume">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 20V10"></path>
+                            <path d="M12 20V4"></path>
+                            <path d="M18 20v-7"></path>
+                        </svg>
+                    </button>
+                    <button class="icon-button" type="button" id="openDialogButton" aria-label="Ajouter une habitude">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M12 8v8M8 12h8"></path>
+                        </svg>
+                    </button>
+                    <button class="icon-button" type="button" id="signOutButton" aria-label="Se deconnecter">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <path d="m16 17 5-5-5-5"></path>
+                            <path d="M21 12H9"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <section class="hero" id="hero">
+                <div class="hero-copy">
+                    <strong>Routine personnelle</strong>
+                    <p>Version statique sur GitHub Pages, avec authentification et stockage centralise sur Supabase.</p>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-label">Habitudes</span>
+                        <span class="stat-value" id="habitCount">0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Taux global</span>
+                        <span class="stat-value" id="completionRate">0%</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Aujourd'hui</span>
+                        <span class="stat-value" id="todayCount">0</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="board">
+                <div class="board-head">
+                    <div class="segment" id="filterTabs" role="tablist" aria-label="Filtres">
+                        <button type="button" class="active" data-filter="all" aria-selected="true">Toutes</button>
+                        <button type="button" data-filter="today" aria-selected="false">A faire</button>
                     </div>
 
-                    <div class="toolbar-actions">
-                        <button class="icon-button" type="button" id="toggleSummary" aria-label="Afficher ou masquer le resume">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="M6 20V10"></path>
-                                <path d="M12 20V4"></path>
-                                <path d="M18 20v-7"></path>
-                            </svg>
-                        </button>
-                        <button class="icon-button" type="button" id="openDialogButton" aria-label="Ajouter une habitude">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <circle cx="12" cy="12" r="9"></circle>
-                                <path d="M12 8v8M8 12h8"></path>
-                            </svg>
-                        </button>
-                    </div>
-                </header>
+                    <p class="board-status" id="syncStatus">Synchronise avec Supabase.</p>
 
-                <section class="hero" id="hero">
-                    <div class="hero-copy">
-                        <strong>Routine personnelle</strong>
-                        <p>Version statique, sans Firebase, avec stockage local pour fonctionner directement sur GitHub Pages.</p>
-                    </div>
-                    <div class="hero-stats">
-                        <div class="stat">
-                            <span class="stat-label">Habitudes</span>
-                            <span class="stat-value" id="habitCount">0</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-label">Taux global</span>
-                            <span class="stat-value" id="completionRate">0%</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-label">Aujourd'hui</span>
-                            <span class="stat-value" id="todayCount">0</span>
-                        </div>
-                    </div>
-                </section>
-
-                <div class="segment" id="filterTabs" role="tablist" aria-label="Filtres">
-                    <button type="button" class="active" data-filter="all" aria-selected="true">Toutes</button>
-                    <button type="button" data-filter="today" aria-selected="false">A faire</button>
+                    <button class="floating-add" type="button" id="floatingAdd">
+                        <span>+</span> Nouvelle habitude
+                    </button>
                 </div>
 
                 <section class="habit-list" id="habitList"></section>
-
-                <button class="floating-add" type="button" id="floatingAdd">
-                    <span>+</span> Nouvelle habitude
-                </button>
             </section>
-        </div>
+        </section>
     </main>
 
     <dialog id="habitDialog">
         <form method="dialog" class="dialog-card" id="habitForm">
-            <h2>Nouvelle habitude</h2>
-            <p>Ajoute une carte avec sa couleur, son icone et un historique vide pret a l'emploi.</p>
+            <h2 id="habitDialogTitle">Nouvelle habitude</h2>
+            <p id="habitDialogCopy">Ajoute une carte avec sa couleur, son icone et un historique vide pret a l'emploi.</p>
 
             <label for="habitName">Nom</label>
             <input id="habitName" name="habitName" type="text" maxlength="38" placeholder="Ex. Marcher 10 minutes" required>
