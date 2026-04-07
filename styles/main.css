@@ -24,7 +24,7 @@ body {
         linear-gradient(180deg, #111317 0%, #050505 40%, #020202 100%);
     display: flex;
     justify-content: center;
-    padding: 24px 14px 56px;
+    padding: 32px 18px 56px;
 }
 
 body::before {
@@ -39,126 +39,45 @@ body::before {
     mask-image: radial-gradient(circle at center, black 42%, transparent 92%);
 }
 
-.shell { width: min(100%, 460px); }
+.shell { width: min(100%, 1180px); }
 
-.phone {
-    min-height: 860px;
-    border-radius: 42px;
-    padding: 18px 14px;
-    position: relative;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 16%), linear-gradient(180deg, #0a0a0a, #020202);
-    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.16), inset 0 0 0 6px rgba(255, 255, 255, 0.04), 0 24px 80px rgba(0, 0, 0, 0.62);
+.app-shell {
+    padding: 28px;
+    border-radius: 36px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 18%),
+        linear-gradient(180deg, rgba(17, 18, 22, 0.96), rgba(9, 9, 10, 0.94));
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 24px 80px rgba(0, 0, 0, 0.48);
+    backdrop-filter: blur(10px);
 }
 
-.phone::before {
-    content: "";
-    position: absolute;
-    top: 14px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 118px;
-    height: 10px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.08);
-}
-
-.screen {
-    min-height: 820px;
-    border-radius: 32px;
-    padding: 18px 14px 28px;
-    background: radial-gradient(circle at top, rgba(92, 92, 92, 0.12), transparent 20%), linear-gradient(180deg, #040404, #050505);
-}
-
-.statusbar, .toolbar, .hero-stats, .habit-head, .habit-meta, .dialog-actions, .empty-state {
+.toolbar, .hero-stats, .habit-head, .habit-meta, .dialog-actions, .empty-state, .board-head {
     display: flex;
     align-items: center;
 }
 
-.statusbar, .toolbar, .habit-meta, .dialog-actions, .empty-state {
+.toolbar, .habit-meta, .dialog-actions, .empty-state, .board-head {
     justify-content: space-between;
 }
 
-.statusbar {
-    padding: 6px 10px 24px;
-    font-size: .98rem;
-    font-weight: 800;
-    letter-spacing: -.04em;
-}
-
-.status-icons, .toolbar-actions, .signal, .swatches, .chips {
+.toolbar-actions, .swatches, .chips {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.signal span {
-    width: 4px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, .92);
+.toolbar {
+    padding: 0 0 24px;
+    gap: 20px;
 }
-
-.signal span:nth-child(1) { height: 5px; opacity: .4; }
-.signal span:nth-child(2) { height: 7px; opacity: .6; }
-.signal span:nth-child(3) { height: 9px; opacity: .8; }
-.signal span:nth-child(4) { height: 11px; }
-
-.wifi {
-    width: 16px;
-    height: 12px;
-    border-top: 2px solid rgba(255, 255, 255, .92);
-    border-left: 2px solid transparent;
-    border-right: 2px solid transparent;
-    border-radius: 50%;
-    position: relative;
-}
-
-.wifi::before, .wifi::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    border-top: 2px solid rgba(255, 255, 255, .92);
-    border-left: 2px solid transparent;
-    border-right: 2px solid transparent;
-    border-radius: 50%;
-}
-
-.wifi::before { top: 3px; width: 11px; height: 7px; }
-.wifi::after { top: 6px; width: 6px; height: 4px; }
-
-.battery {
-    width: 19px;
-    height: 11px;
-    border-radius: 4px;
-    border: 2px solid rgba(255, 255, 255, .92);
-    position: relative;
-}
-
-.battery::after {
-    content: "";
-    position: absolute;
-    right: -4px;
-    top: 2px;
-    width: 2px;
-    height: 5px;
-    border-radius: 1px;
-    background: rgba(255, 255, 255, .92);
-}
-
-.battery span {
-    display: block;
-    width: 72%;
-    height: 100%;
-    background: rgba(255, 255, 255, .92);
-}
-
-.toolbar { padding: 0 4px 20px; }
 
 .brand {
     display: flex;
-    align-items: center;
-    gap: 12px;
+    align-items: flex-start;
+    gap: 14px;
 }
 
 .brand h1, .habit-title, .dialog-card h2 {
@@ -169,6 +88,32 @@ body::before {
 
 .brand h1 { font-size: 2rem; }
 .brand h1 span { color: #b678ff; }
+.brand-copy {
+    margin: 8px 0 0;
+    max-width: 520px;
+    color: var(--muted);
+}
+
+.time-badge {
+    min-width: 96px;
+    padding: 10px 14px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.time-badge span {
+    color: var(--muted);
+    font-size: .75rem;
+}
+
+.time-badge strong {
+    font-size: 1rem;
+    letter-spacing: -.03em;
+}
 
 .icon-button, .floating-add, .segment button, .habit-cta, .swatch, .chip, .primary-button, .secondary-button, .danger-button, .inline-button {
     border: 0;
@@ -198,7 +143,7 @@ body::before {
     border: 1px solid var(--stroke);
     border-radius: 28px;
     padding: 18px;
-    margin-bottom: 18px;
+    margin-bottom: 22px;
 }
 
 .hero-copy strong {
@@ -241,6 +186,18 @@ body::before {
     border-radius: 18px;
     background: rgba(255, 255, 255, .06);
     border: 1px solid rgba(255, 255, 255, .08);
+}
+
+.board {
+    padding: 18px;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.board-head {
+    gap: 16px;
+    margin-bottom: 18px;
 }
 
 .segment button {
@@ -314,6 +271,11 @@ body::before {
     padding: 0;
 }
 
+.inline-button:hover,
+.secondary-button:hover {
+    color: var(--text);
+}
+
 .habit-cta {
     width: 86px;
     height: 86px;
@@ -349,9 +311,7 @@ body::before {
 .grid-cell:hover { transform: scale(1.08); }
 
 .floating-add {
-    position: sticky;
-    bottom: 16px;
-    margin: 22px 0 0 auto;
+    margin-left: auto;
     min-height: 60px;
     padding: 0 20px;
     border-radius: 999px;
@@ -472,12 +432,17 @@ textarea {
 }
 
 @media (max-width: 480px) {
-    body { padding: 10px 8px 36px; }
-    .phone { min-height: auto; padding: 10px; border-radius: 30px; }
-    .screen { min-height: auto; padding: 14px 10px 24px; }
+    body { padding: 12px 8px 36px; }
+    .app-shell { padding: 14px; border-radius: 26px; }
+    .toolbar, .board-head, .hero-stats { flex-direction: column; align-items: stretch; }
+    .toolbar-actions { justify-content: space-between; }
+    .brand { flex-direction: column; }
+    .brand-copy { max-width: none; }
+    .board { padding: 12px; }
     .habit-icon { width: 62px; height: 62px; flex-basis: 62px; }
     .habit-cta { width: 72px; height: 72px; flex-basis: 72px; }
     .habit-title { font-size: 1.34rem; }
     .habit-grid { gap: 4px; }
-    .floating-add { width: 100%; justify-content: center; }
+    .floating-add, .segment { width: 100%; }
+    .floating-add { justify-content: center; }
 }

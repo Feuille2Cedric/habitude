@@ -62,6 +62,7 @@ function renderHabitCard(habit) {
                     <div class="habit-meta">
                         <span>${streak} jours de suite</span>
                         <span>${rate}% reussi</span>
+                        <button type="button" class="inline-button" data-action="edit" data-id="${habit.id}">Modifier</button>
                         <button type="button" class="inline-button" data-action="delete" data-id="${habit.id}">Supprimer</button>
                     </div>
                 </div>
