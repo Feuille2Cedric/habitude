@@ -78,6 +78,9 @@ function toggleShells({ setup = false, auth = false, app = false }) {
     elements.setupNotice.classList.toggle("is-hidden", !setup);
     elements.authShell.classList.toggle("is-hidden", !auth);
     elements.appShell.classList.toggle("is-hidden", !app);
+    elements.setupNotice.hidden = !setup;
+    elements.authShell.hidden = !auth;
+    elements.appShell.hidden = !app;
 }
 
 function renderApp() {

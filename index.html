@@ -9,7 +9,7 @@
 </head>
 <body>
     <main class="shell">
-        <section class="setup-notice is-hidden" id="setupNotice">
+        <section class="setup-notice is-hidden" id="setupNotice" hidden>
             <div class="setup-card">
                 <h2>Configuration Supabase requise</h2>
                 <p>Ajoute ton URL Supabase et ta cle <code>anon</code> dans <code>scripts/supabase-config.js</code>, puis execute le script SQL fourni dans le dossier <code>supabase</code>.</p>
@@ -41,7 +41,7 @@
             </div>
         </section>
 
-        <section class="app-shell is-hidden" id="appShell">
+        <section class="app-shell is-hidden" id="appShell" hidden>
             <header class="toolbar">
                 <div class="brand">
                     <button class="icon-button" type="button" id="seedButton" aria-label="Recharger la demo">
