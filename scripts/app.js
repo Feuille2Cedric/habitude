@@ -322,11 +322,17 @@ async function boot() {
         }
     });
 
-    const currentUser = await getCurrentUser();
-    if (currentUser) {
-        await handleSignedInUser(currentUser);
-    } else {
+    try {
+        const currentUser = await getCurrentUser();
+        if (currentUser) {
+            await handleSignedInUser(currentUser);
+        } else {
+            handleSignedOutUser();
+        }
+    } catch (error) {
+        console.error(error);
         handleSignedOutUser();
+        setAuthFeedback(`Impossible de contacter Supabase au chargement: ${error.message}`, "error");
     }
 }
 
@@ -401,5 +407,6 @@ function bindEvents() {
 bindEvents();
 boot().catch((error) => {
     console.error(error);
-    toggleShells({ setup: true });
+    handleSignedOutUser();
+    setAuthFeedback(`Erreur de demarrage: ${error.message}`, "error");
 });
