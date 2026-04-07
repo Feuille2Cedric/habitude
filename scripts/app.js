@@ -14,6 +14,8 @@ const elements = {
     habitForm: document.getElementById("habitForm"),
     deleteDialog: document.getElementById("deleteDialog"),
     deleteCopy: document.getElementById("deleteCopy"),
+    habitDialogTitle: document.getElementById("habitDialogTitle"),
+    habitDialogCopy: document.getElementById("habitDialogCopy"),
     colorSwatches: document.getElementById("colorSwatches"),
     iconChips: document.getElementById("iconChips"),
     habitName: document.getElementById("habitName"),
@@ -26,6 +28,7 @@ const state = {
     showHero: true,
     selectedColor: COLORS[0],
     selectedIcon: ICONS[0],
+    editingId: null,
     deleteId: null
 };
 
@@ -41,13 +44,27 @@ function render() {
 }
 
 function resetFormState() {
+    state.editingId = null;
     state.selectedColor = COLORS[0];
     state.selectedIcon = ICONS[0];
     elements.habitForm.reset();
+    elements.habitDialogTitle.textContent = "Nouvelle habitude";
+    elements.habitDialogCopy.textContent = "Ajoute une carte avec sa couleur, son icone et un historique vide pret a l'emploi.";
 }
 
-function openHabitDialog() {
+function openHabitDialog(habit = null) {
     resetFormState();
+
+    if (habit) {
+        state.editingId = habit.id;
+        state.selectedColor = habit.color;
+        state.selectedIcon = habit.icon;
+        elements.habitName.value = habit.name;
+        elements.habitDescription.value = habit.description;
+        elements.habitDialogTitle.textContent = "Modifier l'habitude";
+        elements.habitDialogCopy.textContent = "Ajuste le nom, la description, la couleur ou l'icone sans perdre l'historique.";
+    }
+
     renderFormOptions({ color: state.selectedColor, icon: state.selectedIcon }, elements);
     elements.habitDialog.showModal();
     elements.habitName.focus();
@@ -91,18 +108,39 @@ function createHabit(event) {
     const description = elements.habitDescription.value.trim();
     if (!name) return;
 
-    state.habits.unshift(normalizeHabit({
-        id: uid(),
-        name,
-        description: description || "Nouvelle routine personnelle",
-        color: state.selectedColor,
-        icon: state.selectedIcon,
-        history: new Array(GRID_LENGTH).fill(false)
-    }));
+    if (state.editingId) {
+        state.habits = state.habits.map((habit) => {
+            if (habit.id !== state.editingId) return habit;
+            return normalizeHabit({
+                ...habit,
+                name,
+                description: description || "Nouvelle routine personnelle",
+                color: state.selectedColor,
+                icon: state.selectedIcon,
+                history: habit.history
+            });
+        });
+    } else {
+        state.habits.unshift(normalizeHabit({
+            id: uid(),
+            name,
+            description: description || "Nouvelle routine personnelle",
+            color: state.selectedColor,
+            icon: state.selectedIcon,
+            history: new Array(GRID_LENGTH).fill(false)
+        }));
+    }
 
     persist();
     render();
     elements.habitDialog.close();
+    resetFormState();
+}
+
+function editHabit(habitId) {
+    const habit = state.habits.find((item) => item.id === habitId);
+    if (!habit) return;
+    openHabitDialog(habit);
 }
 
 function bindEvents() {
@@ -136,6 +174,7 @@ function bindEvents() {
         const { action, id, index } = button.dataset;
         if (action === "cell") toggleCell(id, Number(index));
         if (action === "today") toggleToday(id);
+        if (action === "edit") editHabit(id);
         if (action === "delete") askDelete(id);
     });
 
