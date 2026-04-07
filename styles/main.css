@@ -40,10 +40,18 @@ body::before {
     mask-image: radial-gradient(circle at center, black 42%, transparent 92%);
 }
 
-.shell { width: min(100%, 1180px); }
+.shell {
+    width: min(100%, 1180px);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
 
+.is-hidden { display: none !important; }
+
+.setup-notice,
+.auth-shell,
 .app-shell {
-    padding: 28px;
     border-radius: 36px;
     border: 1px solid rgba(255, 255, 255, 0.12);
     background:
@@ -55,25 +63,134 @@ body::before {
     backdrop-filter: blur(10px);
 }
 
-.toolbar, .hero-stats, .habit-head, .habit-meta, .dialog-actions, .empty-state, .board-head {
+.setup-card,
+.auth-card,
+.app-shell {
+    padding: 28px;
+}
+
+.setup-card h2,
+.auth-copy h1,
+.brand h1,
+.habit-title,
+.dialog-card h2 {
+    margin: 0;
+    font-family: "Space Grotesk", "Manrope", sans-serif;
+    letter-spacing: -.06em;
+}
+
+.setup-card p,
+.auth-copy p,
+.brand-copy,
+.hero-copy p,
+.dialog-card p,
+.habit-description,
+.empty-state p,
+.auth-feedback,
+.board-status {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.45;
+}
+
+.setup-card code {
+    color: var(--text);
+    font-family: Consolas, monospace;
+}
+
+.auth-card {
+    max-width: 540px;
+    margin: 0 auto;
+    display: grid;
+    gap: 24px;
+}
+
+.eyebrow {
+    display: inline-block;
+    margin-bottom: 10px;
+    color: #c7a2ff;
+    font-size: .84rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+}
+
+.auth-copy h1,
+.brand h1 {
+    font-size: 2.4rem;
+}
+
+.auth-copy h1 span,
+.brand h1 span {
+    color: #b678ff;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+label {
+    color: var(--muted);
+    font-size: .9rem;
+    margin-top: 8px;
+}
+
+input,
+textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, .08);
+    background: var(--soft);
+    color: var(--text);
+    font: inherit;
+}
+
+textarea {
+    min-height: 92px;
+    resize: vertical;
+}
+
+.auth-actions,
+.toolbar-actions,
+.hero-stats,
+.habit-head,
+.habit-meta,
+.dialog-actions,
+.empty-state,
+.board-head,
+.swatches,
+.chips,
+.toolbar {
     display: flex;
     align-items: center;
 }
 
-.toolbar, .habit-meta, .dialog-actions, .empty-state, .board-head {
+.auth-actions,
+.toolbar,
+.habit-meta,
+.dialog-actions,
+.empty-state,
+.board-head {
     justify-content: space-between;
 }
 
-.toolbar-actions, .swatches, .chips {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.auth-actions {
+    gap: 12px;
+    margin-top: 12px;
 }
 
-.toolbar {
-    padding: 0 0 24px;
-    gap: 20px;
+.auth-feedback {
+    min-height: 24px;
+    margin-top: 8px;
 }
+
+.auth-feedback.error { color: var(--danger); }
+.auth-feedback.success { color: var(--success); }
+.board-status.error { color: var(--danger); }
+.board-status.success { color: var(--success); }
 
 .brand {
     display: flex;
@@ -86,33 +203,13 @@ body::before {
     max-width: 520px;
 }
 
-.brand h1 { font-size: 2rem; }
-.brand h1 span { color: #b678ff; }
-.brand-copy {
-    margin: 8px 0 0;
-    max-width: 520px;
-    color: var(--muted);
-}
-
-.time-badge {
-    min-width: 96px;
-    padding: 10px 14px;
+.time-badge,
+.user-badge,
+.stat {
+    padding: 12px 14px;
     border-radius: 18px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.time-badge span {
-    color: var(--muted);
-    font-size: .75rem;
-}
-
-.time-badge strong {
-    font-size: 1rem;
-    letter-spacing: -.03em;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .time-badge,
@@ -250,18 +347,6 @@ textarea:focus-visible {
     border: 1px solid rgba(255, 255, 255, .08);
 }
 
-.board {
-    padding: 18px;
-    border-radius: 30px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.board-head {
-    gap: 16px;
-    margin-bottom: 18px;
-}
-
 .segment button {
     min-height: 42px;
     border-radius: 14px;
@@ -389,22 +474,8 @@ textarea:focus-visible {
     background: color-mix(in srgb, var(--habit-color) 12%, #2f3137);
 }
 
-.grid-cell.is-active { background: var(--habit-color); }
-.grid-cell:hover { transform: scale(1.08); }
-
-.floating-add {
-    margin-left: auto;
-    min-height: 60px;
-    padding: 0 20px;
-    border-radius: 999px;
-    background: linear-gradient(135deg, #ffffff, #d8dce8);
-    color: #101113;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-family: "Space Grotesk", "Manrope", sans-serif;
-    font-weight: 800;
-    box-shadow: 0 18px 40px rgba(0, 0, 0, .4);
+.grid-cell.is-active {
+    background: var(--habit-color);
 }
 
 .grid-cell:hover {
@@ -502,18 +573,66 @@ dialog::backdrop {
     font-weight: 800;
 }
 
-@media (max-width: 480px) {
-    body { padding: 12px 8px 36px; }
-    .app-shell { padding: 14px; border-radius: 26px; }
-    .toolbar, .board-head, .hero-stats { flex-direction: column; align-items: stretch; }
-    .toolbar-actions { justify-content: space-between; }
-    .brand { flex-direction: column; }
-    .brand-copy { max-width: none; }
-    .board { padding: 12px; }
-    .habit-icon { width: 62px; height: 62px; flex-basis: 62px; }
-    .habit-cta { width: 72px; height: 72px; flex-basis: 72px; }
-    .habit-title { font-size: 1.34rem; }
-    .habit-grid { gap: 4px; }
-    .floating-add, .segment { width: 100%; }
-    .floating-add { justify-content: center; }
+@media (max-width: 900px) {
+    .toolbar,
+    .board-head,
+    .hero-stats {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .toolbar-actions {
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+
+    .segment,
+    .floating-add {
+        width: 100%;
+    }
+
+    .floating-add {
+        justify-content: center;
+    }
+
+    .board-status {
+        text-align: left;
+    }
+}
+
+@media (max-width: 640px) {
+    body {
+        padding: 12px 8px 36px;
+    }
+
+    .setup-card,
+    .auth-card,
+    .app-shell {
+        padding: 16px;
+        border-radius: 26px;
+    }
+
+    .brand {
+        flex-direction: column;
+    }
+
+    .habit-icon {
+        width: 62px;
+        height: 62px;
+        flex-basis: 62px;
+    }
+
+    .habit-cta {
+        width: 72px;
+        height: 72px;
+        flex-basis: 72px;
+    }
+
+    .habit-title {
+        font-size: 1.34rem;
+    }
+
+    .habit-grid {
+        gap: 4px;
+    }
 }
