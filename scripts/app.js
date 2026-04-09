@@ -1,4 +1,4 @@
-import { COLORS, GRID_LENGTH, ICONS, normalizeHabit, uid } from "./data.js";
+import { alignHabitToToday, COLORS, getTodayDateKey, GRID_LENGTH, ICONS, normalizeHabit, uid } from "./data.js";
 import {
     createHabitRecord,
     deleteHabitRecord,
@@ -55,7 +55,8 @@ const state = {
     selectedIcon: ICONS[0],
     editingId: null,
     deleteId: null,
-    user: null
+    user: null,
+    todayKey: getTodayDateKey()
 };
 
 function getCacheKey(userId) {
@@ -146,15 +147,28 @@ async function refreshHabits() {
 
     setSyncStatus("Chargement des habitudes...");
     try {
-        state.habits = await loadHabits(supabase);
+        const loadedHabits = await loadHabits(supabase);
+        const alignedResults = loadedHabits.map(alignHabitToToday);
+        const alignedHabits = alignedResults.map((result) => result.habit);
+        const shiftedHabits = alignedResults.filter((result) => result.changed).map((result) => result.habit);
+
+        state.habits = alignedHabits;
 
         if (state.habits.length === 0) {
             setSyncStatus("Premiere connexion detectee, creation de la demo...");
             state.habits = await replaceWithSeedHabits(supabase, state.user.id);
+        } else if (shiftedHabits.length > 0) {
+            setSyncStatus("Nouveau jour detecte, mise a jour de la grille...");
+            const syncedHabits = await Promise.all(
+                shiftedHabits.map((habit) => updateHabitRecord(supabase, habit.id, { history: habit.history }))
+            );
+            const syncedById = new Map(syncedHabits.map((habit) => [habit.id, habit]));
+            state.habits = state.habits.map((habit) => syncedById.get(habit.id) || habit);
         }
 
         saveHabitsCache(state.user.id, state.habits);
         renderApp();
+        state.todayKey = getTodayDateKey();
         setSyncStatus("Synchronise avec Supabase.");
     } catch (error) {
         console.error(error);
@@ -179,6 +193,16 @@ function updateHabitInState(updatedHabit) {
     }
     saveHabitsCache(state.user?.id, state.habits);
     renderApp();
+}
+
+async function checkForDayRollover() {
+    const currentDayKey = getTodayDateKey();
+    if (currentDayKey === state.todayKey) return;
+
+    state.todayKey = currentDayKey;
+    if (state.user) {
+        await refreshHabits();
+    }
 }
 
 async function persistHabitPatch(habitId, patch) {
@@ -352,6 +376,11 @@ async function submitSignUp() {
 async function boot() {
     renderClock(elements.clock);
     setInterval(() => renderClock(elements.clock), 30000);
+    setInterval(() => {
+        checkForDayRollover().catch((error) => {
+            console.error(error);
+        });
+    }, 60000);
     renderFormOptions({ color: state.selectedColor, icon: state.selectedIcon }, elements);
 
     if (!isSupabaseConfigured()) {
@@ -382,6 +411,14 @@ async function boot() {
 }
 
 function bindEvents() {
+    document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") {
+            checkForDayRollover().catch((error) => {
+                console.error(error);
+            });
+        }
+    });
+
     elements.authForm.addEventListener("submit", submitSignIn);
     elements.signUpButton.addEventListener("click", submitSignUp);
 

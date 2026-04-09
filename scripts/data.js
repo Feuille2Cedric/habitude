@@ -39,6 +39,55 @@ export function createHistory(seedOffset = 0) {
     );
 }
 
+function startOfLocalDay(date) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+export function getTodayDateKey() {
+    const now = new Date();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    return `${now.getFullYear()}-${month}-${day}`;
+}
+
+export function getHabitAnchorDate(habit) {
+    const rawDate = habit.updatedAt || habit.updated_at || habit.createdAt || habit.created_at;
+    if (!rawDate) return new Date();
+
+    const parsed = new Date(rawDate);
+    return Number.isNaN(parsed.getTime()) ? new Date() : parsed;
+}
+
+export function getDayDifference(fromDate, toDate = new Date()) {
+    const from = startOfLocalDay(fromDate);
+    const to = startOfLocalDay(toDate);
+    const diff = Math.round((to.getTime() - from.getTime()) / 86400000);
+    return Math.max(0, diff);
+}
+
+export function shiftHistory(history, days) {
+    if (days <= 0) return [...history];
+    if (days >= history.length) return new Array(history.length).fill(false);
+    return history.slice(days).concat(new Array(days).fill(false));
+}
+
+export function alignHabitToToday(habit) {
+    const normalizedHabit = normalizeHabit(habit);
+    const daysElapsed = getDayDifference(getHabitAnchorDate(habit));
+
+    if (daysElapsed <= 0) {
+        return { habit: normalizedHabit, changed: false };
+    }
+
+    return {
+        habit: {
+            ...normalizedHabit,
+            history: shiftHistory(normalizedHabit.history, daysElapsed)
+        },
+        changed: true
+    };
+}
+
 export function normalizeHabit(habit) {
     return {
         id: habit.id || uid(),
@@ -46,6 +95,8 @@ export function normalizeHabit(habit) {
         description: habit.description || "Description a definir",
         color: habit.color || COLORS[0],
         icon: ICON_PATHS[habit.icon] ? habit.icon : ICONS[0],
+        createdAt: habit.createdAt || habit.created_at || null,
+        updatedAt: habit.updatedAt || habit.updated_at || null,
         history: Array.from(
             { length: GRID_LENGTH },
             (_, index) => Boolean(habit.history && habit.history[index])
