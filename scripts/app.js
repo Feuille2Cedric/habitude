@@ -58,6 +58,29 @@ const state = {
     user: null
 };
 
+function getCacheKey(userId) {
+    return `habitkit-cache:${userId}`;
+}
+
+function saveHabitsCache(userId, habits) {
+    if (!userId) return;
+    localStorage.setItem(getCacheKey(userId), JSON.stringify(habits));
+}
+
+function loadHabitsCache(userId) {
+    if (!userId) return [];
+
+    try {
+        const raw = localStorage.getItem(getCacheKey(userId));
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed.map(normalizeHabit) : [];
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+}
+
 function setAuthFeedback(message = "", tone = "") {
     elements.authFeedback.textContent = message;
     elements.authFeedback.className = "auth-feedback";
@@ -130,10 +153,19 @@ async function refreshHabits() {
             state.habits = await replaceWithSeedHabits(supabase, state.user.id);
         }
 
+        saveHabitsCache(state.user.id, state.habits);
         renderApp();
         setSyncStatus("Synchronise avec Supabase.");
     } catch (error) {
         console.error(error);
+        const cachedHabits = loadHabitsCache(state.user.id);
+        if (cachedHabits.length > 0) {
+            state.habits = cachedHabits;
+            renderApp();
+            setSyncStatus("Lecture Supabase en erreur, affichage du cache local.", "error");
+            return;
+        }
+
         setSyncStatus(`Erreur de synchronisation: ${error.message}`, "error");
     }
 }
@@ -145,6 +177,7 @@ function updateHabitInState(updatedHabit) {
     } else {
         state.habits[index] = updatedHabit;
     }
+    saveHabitsCache(state.user?.id, state.habits);
     renderApp();
 }
 
@@ -188,6 +221,7 @@ async function confirmDelete() {
         await deleteHabitRecord(supabase, state.deleteId);
         state.habits = state.habits.filter((habit) => habit.id !== state.deleteId);
         state.deleteId = null;
+        saveHabitsCache(state.user?.id, state.habits);
         renderApp();
         setSyncStatus("Habitude supprimee.");
     } catch (error) {
@@ -228,6 +262,7 @@ async function submitHabit(event) {
                 history: new Array(GRID_LENGTH).fill(false)
             }));
             state.habits.unshift(createdHabit);
+            saveHabitsCache(state.user.id, state.habits);
             renderApp();
         }
 
@@ -254,6 +289,7 @@ async function seedHabits() {
     setSyncStatus("Recreation des habitudes de demo...");
     try {
         state.habits = await replaceWithSeedHabits(supabase, state.user.id);
+        saveHabitsCache(state.user.id, state.habits);
         renderApp();
         setSyncStatus("Demo rechargee dans Supabase.");
     } catch (error) {
